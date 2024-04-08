@@ -6,4 +6,4 @@ COPY . /app
 
 WORKDIR /output
 
-ENTRYPOINT cookiecutter --config-file cookiecutter_config.yml /app
+ENTRYPOINT cookiecutter --config-file /app/cookiecutter_config.yml /app
