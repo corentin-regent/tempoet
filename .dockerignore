@@ -1,6 +1,6 @@
 *
 
 !cookiecutter.json
-!cookiecutter_config.json
+!cookiecutter_config.yml
 !hooks
 !{{ cookiecutter.package_name }}
