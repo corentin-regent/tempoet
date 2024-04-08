@@ -24,4 +24,4 @@ runs:
       uses: actions/cache@v4
       with:
         path: ~/.cache
-        key: venv-${{ runner.os }}-${{ inputs.python-version }}-${{ hashFiles('**/poetry.lock') }}
+        key: venv-${{ runner.os }}-${{ inputs.python-version }}-${{ hashFiles('poetry.lock') }}
