@@ -71,7 +71,7 @@ can help you generate your project in an isolated, tested and reproducible envir
 
 You only need to run the following command in order to generate your project::
 
-  docker run --user $(id -u) -i --rm -v .:/output ghcr.io/corentin-regent/tempoet:main
+  docker run --user $(id -u) -i --rm --mount type=bind,src=$(pwd),dst=/output ghcr.io/corentin-regent/tempoet:main
 
 On Windows you need to run this using bash.
 A solution is to execute it in a `Git Bash`_ shell.
