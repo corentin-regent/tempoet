@@ -36,6 +36,9 @@ jobs:
     needs: deps-check
     runs-on: ${{ matrix.os }}
     timeout-minutes: 5
+    defaults:
+      run:
+        shell: bash
 
     strategy:
       fail-fast: false
