@@ -5,6 +5,7 @@ on:
     branches: 
       - 'main'
     paths:
+      - 'README.rst'
       - '{{ cookiecutter.package_name }}/**'
       - 'hooks'
       - 'cookiecutter.json'
