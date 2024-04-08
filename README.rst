@@ -69,18 +69,12 @@ Using Docker (recommended)
 A Docker_ image hosted `on GitHub Packages <https://github.com/corentin-regent/tempoet/pkgs/container/tempoet>`_
 can help you generate your project in an isolated, tested and reproducible environment.
 
-In order to pull this image, you will need to create a GitHub
-`personal access token`_ with ``read: packages`` scope.
+You only need to run the following command in order to generate your project::
 
-Then you can fill in and run the following commands to generate your project::
+  docker run --user $(id -u) -i --rm -v .:/output ghcr.io/corentin-regent/tempoet:main
 
-  export CR_PAT=<YOUR_TOKEN>
-  echo $CR_PAT | docker login ghcr.io -u <YOUR_GITHUB_USERNAME> --password-stdin
-  docker pull ghcr.io/corentin-regent/tempoet
-  docker run --user $(id -u) -i --rm -v .:/output tempoet
-
-On Windows you need to run these commands using bash.
-A solution is to execute them in a `Git Bash`_ shell.
+On Windows you need to run this using bash.
+A solution is to execute it in a `Git Bash`_ shell.
 
 Manually
 ^^^^^^^^
