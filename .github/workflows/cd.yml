@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       REGISTRY: ghcr.io  # GitHub Container Registry
-      IMAGE_NAME: tempoet
+      IMAGE_NAME: ${{ github.repository }}
     permissions:
       contents: read
       packages: write
