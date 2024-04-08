@@ -1,0 +1,12 @@
+__pycache__
+
+dist
+
+.coverage
+{%- if cookiecutter.docs %}
+docs/_build
+{%- endif %}
+htmlcov
+.mypy_cache
+.pytest_cache
+.ruff_cache

@@ -1,0 +1,10 @@
+{
+  "project_name": "My Project",
+  "package_name": "{{ cookiecutter.project_name | lower | replace(' ', '-') }}",
+  "short_description": "Cool project built with Tempoet",
+  "owner": "corentin-regent",
+  "author": "Corentin Régent",
+  "email": "corentin.regent.pro@gmail.com",
+  "license": ["MIT", "BSD-3-Clause", "ISC", "Apache-2.0", "GPL-3.0-only", "None"],
+  "docs": true
+}

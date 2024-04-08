@@ -1,0 +1,163 @@
+name: Continuous Integration
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  deps-check:
+    name: Dependency check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.PAT }}
+
+      - name: Setup
+        uses: ./.github/actions/setup
+        with:
+          python-version: '3.12'
+
+      - name: Refresh lock file
+        run: poetry lock --no-update
+
+      - name: Commit lock file
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: '[skip ci] Refresh lock file'
+          file_pattern: poetry.lock
+
+  test-unit:
+    name: Unit Tests (${{ matrix.os }}, Python ${{ matrix.python-version }})
+    needs: deps-check
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 5
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-latest
+          - macos-latest
+          - windows-latest
+        python-version:
+          - '3.12'
+        include:
+          - os: ubuntu-latest
+            python-version: '3.8'
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
+
+      - name: Setup
+        uses: ./.github/actions/setup
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        shell: bash
+        run: poetry install --no-interaction --with test,unit
+
+      - name: Run unit tests
+        shell: bash
+        run: poetry run pytest -v tests/unit
+
+  test-e2e:
+    name: End-to-end tests (Python ${{ matrix.python-version }})
+    needs: test-unit
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version:
+          - '3.8'
+          - '3.12'
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
+
+      - name: Setup
+        uses: ./.github/actions/setup
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        shell: bash
+        run: poetry install --no-interaction --with test,e2e
+
+      - name: Run end-to-end tests
+        shell: bash
+        run: poetry run pytest -v tests/e2e
+
+  lint-format:
+    name: Lint & Format
+    needs: deps-check
+    runs-on: ubuntu-latest
+    env:
+      paths: hooks tests
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.PAT }}
+          ref: ${{ github.ref }}
+
+      - name: Setup
+        uses: ./.github/actions/setup
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: poetry install --no-interaction --with dev,test,unit,e2e
+
+      - name: Lint codebase
+        run: poetry run ruff check ${{ env.paths }}
+
+      - name: Format codebase
+        run: poetry run ruff format ${{ env.paths }}
+
+      - name: Commit changes
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: '[skip ci] Lint & Format codebase'
+
+  type-check:
+    name: Type check
+    needs: deps-check
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
+
+      - name: Setup
+        uses: ./.github/actions/setup
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: poetry install --no-interaction --with dev,test,unit,e2e
+
+      - name: Run type checking
+        uses: tsuyoshicho/action-mypy@v4
+        with:
+          execute_command: poetry run mypy
+          fail_on_error: true
+          reporter: github-pr-review

@@ -1,0 +1,37 @@
+{
+  "name": "{{ cookiecutter.owner }}/{{ cookiecutter.package_name }}",
+  "image": "mcr.microsoft.com/devcontainers/python:3.12-bookworm",
+  "postCreateCommand": "make setup",
+  "features": {
+   "ghcr.io/devcontainers-contrib/features/poetry:2": {}
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "charliermarsh.ruff",
+        "github.vscode-github-actions",
+        "ms-python.python",
+        "njpwerner.autodocstring",
+        "redhat.vscode-yaml",
+        "tamasfe.even-better-toml",
+        "trond-snekvik.simple-rst"
+      ],
+      "settings": {
+        "autoDocstring.docstringFormat": "google-notypes",
+        "editor.codeActionsOnSave": {
+          "source.fixAll": "always",
+          "source.organizeImports": "always"
+        },
+        "editor.defaultFormatter": "charliermarsh.ruff",
+        "editor.formatOnSave": true,
+        "python.testing.pytestArgs": [
+            "-v",
+            "tests/"
+        ],
+        "python.testing.pytestEnabled": true,
+        "python.testing.unittestEnabled": false
+      }
+    }
+  }
+}
+  

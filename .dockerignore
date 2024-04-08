@@ -1,0 +1,6 @@
+*
+
+!cookiecutter.json
+!cookiecutter_config.json
+!hooks
+!{{ cookiecutter.package_name }}

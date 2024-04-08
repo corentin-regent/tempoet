@@ -1,0 +1,191 @@
+name: Continuous Integration
+
+on:
+  pull_request:
+    paths:
+      - "**.py"
+      - "pyproject.toml"
+      - "poetry.lock"
+      - "sonar-project.properties"
+      - ".github/actions/setup/action.yml"
+      - ".github/workflows/ci.yml"
+  push:
+    branches:
+      - main
+{%- raw %}
+
+jobs:
+  deps-check:
+    name: Dependency check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.PAT }}
+
+      - name: Setup
+        uses: ./.github/actions/setup
+        with:
+          python-version: '3.12'
+
+      - name: Refresh lock file
+        run: poetry lock --no-update
+
+      - name: Commit lock file
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: '[skip ci] Refresh lock file'
+          file_pattern: poetry.lock
+
+  test:
+    name: Test (Python ${{ matrix.python-version }})
+    needs: deps-check
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      coverage: ${{ matrix.python-version == '3.8' || matrix.python-version == '3.12' }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version:
+          - "3.8"
+          - "3.9"
+          - "3.10"
+          - "3.11"
+          - "3.12"
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
+
+      - name: Setup (${{ matrix.python-version }})
+        uses: ./.github/actions/setup
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        shell: bash
+        run: poetry install --no-interaction --no-root --with dev,test
+
+      - name: Run tests
+        if: ${{ env.coverage != 'true' }}
+        shell: bash
+        run: poetry run pytest -v tests/
+
+      - name: Run tests with coverage
+        if: ${{ env.coverage == 'true' }}
+        shell: bash
+        run: poetry run coverage run -m pytest -v tests/
+
+      - name: Upload coverage artifact
+        if: ${{ env.coverage == 'true' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-${{ matrix.python-version }}
+          path: .coverage
+
+  report:
+    name: Report coverage
+    needs: test
+    runs-on: ubuntu-latest
+    if: ${{ github.event.pull_request.head.repo.full_name == github.event.pull_request.base.repo.full_name }}
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.ref }}
+
+      - name: Setup
+        uses: ./.github/actions/setup
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: poetry install --no-interaction --no-root --with test
+
+      - name: Download test artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: coverage-*
+
+      - name: Combine coverage files
+        run: poetry run coverage combine coverage-*/.coverage
+
+      - name: Generate coverage report
+        run: |
+          poetry run coverage xml -i
+{%- endraw %}
+          sed -i 's/home\/runner\/work\/{{ cookiecutter.package_name }}\/{{ cookiecutter.package_name }}/github\/workspace/g' coverage.xml
+{%- raw %}
+
+      - name: Report to SonarCloud
+        uses: sonarsource/sonarcloud-github-action@v2
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+  type-check:
+    name: Type check
+    needs: deps-check
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
+
+      - name: Setup
+        uses: ./.github/actions/setup
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: poetry install --no-interaction --no-root --with dev,test
+
+      - name: Run type checking
+        uses: tsuyoshicho/action-mypy@v4
+        with:
+          execute_command: poetry run mypy
+          fail_on_error: true
+          reporter: github-pr-review
+
+  lint-format:
+    name: Lint & Format
+    needs: deps-check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.PAT }}
+          ref: ${{ github.ref }}
+
+      - name: Setup
+        uses: ./.github/actions/setup
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: poetry install --no-interaction --no-root --with dev,test
+
+      - name: Lint codebase
+        run: poetry run ruff check
+
+      - name: Format codebase
+        run: poetry run ruff format
+
+      - name: Commit changes
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: '[skip ci] Lint & Format codebase'
+{%- endraw %}

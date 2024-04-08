@@ -1,0 +1,73 @@
+[tool.poetry]
+name = "tempoet"
+version = "1.0.0"
+description = "Cookiecutter template for modern Poetry projects"
+authors = ["Corentin Régent <corentin.regent.pro@gmail.com>"]
+package-mode = false
+
+[tool.poetry.dependencies]
+python = "^3.8"
+
+[tool.poetry.group.dev]
+optional = true
+
+[tool.poetry.group.dev.dependencies]
+mypy = "^1.7"
+ruff = "^0.3"
+
+[tool.poetry.group.test]
+optional = true
+
+[tool.poetry.group.test.dependencies]
+pytest = "^8"
+
+[tool.poetry.group.unit]
+optional = true
+
+[tool.poetry.group.unit.dependencies]
+pytest-cookies = "^0.7"
+
+[tool.poetry.group.e2e]
+optional = true
+
+[tool.poetry.group.e2e.dependencies]
+
+
+[tool.coverage.run]
+branch = true
+omit = ["{{ cookiecutter.package_name }}"]
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = true
+exclude_also = [
+    "if TYPE_CHECKING:"
+]
+
+[tool.mypy]
+strict = true
+enable_error_code = "explicit-override"
+exclude = "{{ cookiecutter.package_name }}"
+
+[tool.ruff]
+fix = true
+line-length = 120
+target-version = "py38"
+
+[tool.ruff.format]
+docstring-code-format = true
+docstring-code-line-length = 88
+line-ending = "lf"
+quote-style = "single"
+
+[tool.ruff.lint]
+dummy-variable-rgx = "^_+$"
+extend-select = ["I"]  # isort
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

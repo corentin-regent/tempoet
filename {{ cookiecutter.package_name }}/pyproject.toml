@@ -1,0 +1,100 @@
+{%- set license_classifiers = {
+    'MIT': 'License :: OSI Approved :: MIT License',
+    'BSD-3-Clause': 'License :: OSI Approved :: BSD License',
+    'ISC': 'License :: OSI Approved :: ISC License (ISCL)',
+    'Apache-2.0': 'License :: OSI Approved :: Apache Software License',
+    'GPL-3.0-only': 'License :: OSI Approved :: GNU General Public License v3 (GPLv3)'
+} -%}
+[tool.poetry]
+name = "{{ cookiecutter.package_name }}"
+version = "1.0.0"
+homepage = "https://github.com/{{ cookiecutter.owner }}/{{ cookiecutter.package_name }}"
+description = "{{ cookiecutter.short_description }}"
+authors = ["{{ cookiecutter.author | replace('\"', '\\\"') }} <{{ cookiecutter.email }}>"]
+readme = "README.rst"
+{%- if cookiecutter.license in license_classifiers %}
+license =  "{{ cookiecutter.license }}"
+{%- endif %}
+
+classifiers = [
+    'Development Status :: 2 - Pre-Alpha',
+{%- if cookiecutter.license in license_classifiers %}
+    '{{ license_classifiers[cookiecutter.license] }}',
+{%- endif %}
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Typing :: Typed",
+]
+
+[tool.poetry.urls]
+Changelog = "https://{{ cookiecutter.owner }}.github.io/{{ cookiecutter.package_name }}/changelog.html"
+
+[tool.poetry.dependencies]
+python = "^3.8"
+
+[tool.poetry.group.dev]
+optional = true
+
+[tool.poetry.group.dev.dependencies]
+mypy = "^1.7"
+ruff = "^0.3"
+
+[tool.poetry.group.test]
+optional = true
+
+[tool.poetry.group.test.dependencies]
+coverage = {version = "^7", extras = ["toml"]}
+pytest = "^8"
+{%- if cookiecutter.docs %}
+
+[tool.poetry.group.docs]
+optional = true
+
+[tool.poetry.group.docs.dependencies]
+furo = "==2024.01.29"
+sphinx = "^7"
+sphinx-autodoc-typehints = "^1.21.2"
+
+{%- endif %}
+
+[tool.coverage.run]
+branch = true
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = true
+exclude_also = [
+    "if TYPE_CHECKING:"
+]
+
+[tool.mypy]
+strict = true
+enable_error_code = "explicit-override"
+
+[tool.ruff]
+fix = true
+line-length = 120
+target-version = "py38"
+
+[tool.ruff.format]
+docstring-code-format = true
+docstring-code-line-length = 88
+line-ending = "lf"
+quote-style = "single"
+
+[tool.ruff.lint]
+dummy-variable-rgx = "^_+$"
+extend-select = ["I"]  # isort
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

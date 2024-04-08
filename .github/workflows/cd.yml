@@ -1,0 +1,50 @@
+name: Continuous Deployment
+
+on:
+  push:
+    branches: 
+      - 'main'
+    paths:
+      - '{{ cookiecutter.package_name }}'
+      - 'hooks'
+      - 'cookiecutter.json'
+      - 'cookiecutter_config.yml'
+      - 'Dockerfile'
+      - '.dockerignore'
+      - '.github/workflows/cd.yml'
+
+jobs:
+  docker:
+    name: Build & Push Docker Image
+    runs-on: ubuntu-latest
+    env:
+      REGISTRY: ghcr.io  # GitHub Container Registry
+      IMAGE_NAME: tempoet
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata for Docker
+        id: metadata
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.metadata.outputs.tags }}
+          labels: ${{ steps.metadata.outputs.labels }}
