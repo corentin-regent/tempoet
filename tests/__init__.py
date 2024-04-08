@@ -4,6 +4,8 @@ from contextlib import contextmanager
 
 if sys.version_info >= (3, 9):
     from collections.abc import Iterator
+else:
+    from typing import Iterator
 
 
 @contextmanager
