@@ -26,6 +26,7 @@ jobs:
     concurrency: github-packages
     environment:
       name: github-packages
+      url: https://github.com/corentin-regent/tempoet/pkgs/container/tempoet
 
     steps:
       - name: Check out repository

@@ -66,8 +66,8 @@ Below are two ways you can achieve this.
 Using Docker (recommended)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-A Docker_ image hosted on `GitHub Packages` can help you generate your project
-in an isolated, tested and reproducible environment.
+A Docker_ image hosted `on GitHub Packages <https://github.com/corentin-regent/tempoet/pkgs/container/tempoet>`_
+can help you generate your project in an isolated, tested and reproducible environment.
 
 In order to pull this image, you will need to create a GitHub
 `personal access token`_ with ``read: packages`` scope.
@@ -174,7 +174,6 @@ to help you get started.
 .. _`Git Bash`: https://gitforwindows.org/
 .. _GitHub: https://github.com/
 .. _`GitHub Actions`: https://github.com/features/actions
-.. _`GitHub Packages`: https://docs.github.com/en/packages
 .. _`GitHub Pages`: https://pages.github.com/
 .. _`GitHub releases`: https://docs.github.com/repositories/releasing-projects-on-github/about-releases
 .. _Makefile: https://www.gnu.org/software/make/
