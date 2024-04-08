@@ -23,6 +23,9 @@ jobs:
     permissions:
       contents: read
       packages: write
+    concurrency: github-packages
+    environment:
+      name: github-packages
 
     steps:
       - name: Check out repository
