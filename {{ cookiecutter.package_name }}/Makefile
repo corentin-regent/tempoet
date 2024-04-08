@@ -1,5 +1,6 @@
 .PHONY: setup
 setup:
+	@poetry lock --no-update
 {%- if cookiecutter.docs %}
 	@poetry install --with dev,test,docs
 {%- else %}
