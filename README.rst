@@ -4,6 +4,16 @@ Tempoet
 
 *Cookiecutter template for modern Poetry projects*
 
+|ci| |cd|
+
+.. |ci| image:: https://github.com/corentin-regent/tempoet/actions/workflows/ci.yml/badge.svg
+  :alt: Continuous Integration
+  :target: https://github.com/corentin-regent/tempoet/actions/workflows/ci.yml
+
+.. |cd| image:: https://github.com/corentin-regent/tempoet/actions/workflows/cd.yml/badge.svg
+  :alt: Continuous Deployment
+  :target: https://github.com/corentin-regent/tempoet/actions/workflows/cd.yml
+
 Features
 ========
 
