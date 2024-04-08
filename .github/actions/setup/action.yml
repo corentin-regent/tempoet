@@ -9,6 +9,9 @@ inputs:
 runs:
   using: composite
   steps:
+    - name: Install Poetry
+      uses: snok/install-poetry@v1
+
     - name: Setup Python (${{ inputs.python-version }})
       uses: actions/setup-python@v5
       with:
@@ -16,5 +19,6 @@ runs:
         cache: poetry
         cache-dependency-path: poetry.lock
 
-    - name: Install Poetry
-      uses: snok/install-poetry@v1
+    - name: Set Poetry environment
+      shell: bash
+      run: poetry env use ${{ inputs.python-version }}
