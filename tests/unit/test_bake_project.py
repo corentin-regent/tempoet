@@ -6,8 +6,9 @@ from typing import Any, Optional, Protocol
 
 if sys.version_info >= (3, 9):
     from builtins import dict as Dict
+    from collections.abc import Iterator
 else:
-    from typing import Dict
+    from typing import Dict, Iterator
 
 
 class Result(Protocol):
@@ -21,7 +22,7 @@ class Cookies(Protocol):
 
 
 @contextmanager
-def bake_in_temp_dir(cookies: Cookies, context: Dict[str, Any] = {}):
+def bake_in_temp_dir(cookies: Cookies, context: Dict[str, Any] = {}) -> Iterator[Result]:
     result = cookies.bake(context)
     try:
         yield result
