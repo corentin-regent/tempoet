@@ -134,8 +134,11 @@ Setting Secrets
 
 You need to set the following secrets in your GitHub repository
 for the GitHub Actions to work:
+
 * ``PAT``: A `personal access token`_, with ``contents: write`` permission.
+
 * ``PYPI_TOKEN``: A token for PyPI_, which can be generated `here <https://pypi.org/manage/account/token/>`_.
+
 * ``SONAR_TOKEN``: A token for SonarCloud_, to generate on `this page <https://sonarcloud.io/account/security>`_.
   It is needed in both the 'Actions' secrets and the 'Dependabot' secrets.
 
