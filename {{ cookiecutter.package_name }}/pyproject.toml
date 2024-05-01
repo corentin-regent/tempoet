@@ -57,7 +57,7 @@ optional = true
 
 [tool.poetry.group.docs.dependencies]
 furo = "==2024.04.27"
-sphinx = "^7.4.0"
+sphinx = "^7.1.2"
 sphinx-autodoc-typehints = "^2.0.0"
 
 {%- endif %}
