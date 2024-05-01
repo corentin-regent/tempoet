@@ -1,7 +1,6 @@
 import json
 import subprocess
 import sys
-from collections import OrderedDict
 from shutil import rmtree
 from subprocess import Popen
 from typing import Any
@@ -11,10 +10,9 @@ import pytest
 from .. import chdir
 
 if sys.version_info >= (3, 9):
-    from collections import OrderedDict
-    from collections.abc import Iterator
+    from collections.abc import Iterator, Mapping
 else:
-    from typing import Iterator, OrderedDict
+    from typing import Iterator, Mapping
 
 
 @pytest.fixture
@@ -26,13 +24,13 @@ def cleanup(package_name: str) -> Iterator[None]:
 
 
 @pytest.fixture
-def cookiecutter_config() -> OrderedDict[str, Any]:
+def cookiecutter_config() -> Mapping[str, Any]:
     with open('cookiecutter.json') as cookiecutter_file:
-        return json.load(cookiecutter_file, object_pairs_hook=OrderedDict)
+        return json.load(cookiecutter_file)
 
 
 @pytest.mark.usefixtures('cleanup')
-def test_e2e(package_name: str, cookiecutter_config: OrderedDict[str, Any]) -> None:
+def test_e2e(package_name: str, cookiecutter_config: Mapping[str, Any]) -> None:
     with Popen('scripts/run.sh', stdin=subprocess.PIPE) as process:
         assert process.stdin is not None
         for input_name in cookiecutter_config:
