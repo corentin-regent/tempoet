@@ -152,7 +152,7 @@ jobs:
         run: poetry install --no-interaction --no-root --with dev,test,unit,e2e
 
       - name: Run type checking
-        uses: tsuyoshicho/action-mypy@v4
+        uses: tsuyoshicho/action-mypy@v5
         with:
           execute_command: poetry run mypy
           fail_on_error: true
